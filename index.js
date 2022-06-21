@@ -179,11 +179,12 @@ async function botInit() {
                 user.likeUsersState = false;
                 return userProfileShow(user, chatId)
             }
+            /*
             if(user.likeUsersChatId !== null){
                 for(var likesUser in user.likeUsersChatId){
                     
                 }
-            }
+            }*/
             return defualtReturn(user, chatId)
         } catch (e) {
             console.log(e);
