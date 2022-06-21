@@ -6,7 +6,7 @@ const lang = require('./language');
 const { Op } = require("sequelize");
 const { registerOptions, sexOptions, sex_likeOptions, userInLikeOptions, deleteKeyboardOptions } = require('./options');
 
-const token = '';
+const token = '5436418584:AAGnKZPVpPt0yjSyXFJvNXoErLfUgXSQgd4';
 const bot = new telegramApi(token, { polling: true });
 const botCommands = [{ command: '/myprofile', description: 'Профиль' }]
 
