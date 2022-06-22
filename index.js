@@ -3,10 +3,10 @@ const sequelize = require('./db');
 const userModel = require('./models');
 const options = require('./options');
 const lang = require('./language');
+const token = require('./token');
 const { Op } = require("sequelize");
 const { registerOptions, sexOptions, sex_likeOptions, userInLikeOptions, deleteKeyboardOptions } = require('./options');
 
-const token = '5436418584:AAGnKZPVpPt0yjSyXFJvNXoErLfUgXSQgd4';
 const bot = new telegramApi(token, { polling: true });
 const botCommands = [{ command: '/myprofile', description: 'Профиль' }]
 
@@ -179,12 +179,17 @@ async function botInit() {
                 user.likeUsersState = false;
                 return userProfileShow(user, chatId)
             }
-            /*
             if(user.likeUsersChatId !== null){
-                for(var likesUser in user.likeUsersChatId){
-                    
+                if(user.likeUsersState = true){
+                    return bot.sendMessage(chatId, `Хватит смотреть анкеты, у вас ${user.likeUsersChatId.length()} match'ей`)
                 }
-            }*/
+                if(text === "👀"){
+
+                }
+                for(var likesUser in user.likeUsersChatId){
+                     
+                }
+            }
             return defualtReturn(user, chatId)
         } catch (e) {
             console.log(e);
