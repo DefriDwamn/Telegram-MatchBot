@@ -1,24 +1,23 @@
+require("dotenv").config();
+const env = process.env;
+const inputs = require('./inputs');
 const telegramApi = require('node-telegram-bot-api');
-const sequelize = require('./db');
-const userModel = require('./models');
-const options = require('./options');
-const lang = require('./language');
-const token = require('./token');
+const bot = new telegramApi(env.TG_TOKEN, { polling: true });
+
+const { DBconnection } = require('./db');
 const { Op } = require("sequelize");
-const { registerOptions, sexOptions, sex_likeOptions, userInLikeOptions, deleteKeyboardOptions } = require('./options');
+const botCommands = [{ command: '/profile', description: 'Профиль' }]
 
-const bot = new telegramApi(token, { polling: true });
-const botCommands = [{ command: '/myprofile', description: 'Профиль' }]
-
-async function botInit() {
-    try {
-        await sequelize.authenticate();
-        await sequelize.sync();
-    } catch (e) {
-        console.log("Bad connection to DB: ", e);
-    }
+async function initBot() {
+    DBconnection();
     bot.setMyCommands(botCommands);
 
+    bot.onText(/\/start/, inputs.start(bot));
+    bot.onText(/\/profile/, inputs.profile(bot));
+
+    bot.on("contact", inputs.registration(bot));
+    bot.on("callback_query", inputs.queryCallback(bot));
+/*
     bot.on('message', async msg => {
         const text = msg.text;
         const name = msg.chat.username;
@@ -27,9 +26,7 @@ async function botInit() {
         const chatId = msg.chat.id;
         let user = await userModel.findOne({ where: { chatId: chatId.toString() } });
         let otherUser;
-
-        try {
-            if (user === null) {
+        if (user === null) {
                 if (text === '/start') {
                     user = await userModel.create({ chatId: chatId.toString() });
                     console.log(user)
@@ -179,25 +176,9 @@ async function botInit() {
                 user.likeUsersState = false;
                 return userProfileShow(user, chatId)
             }
-            if(user.likeUsersChatId !== null){
-                if(user.likeUsersState = true){
-                    return bot.sendMessage(chatId, `Хватит смотреть анкеты, у вас ${user.likeUsersChatId.length()} match'ей`)
-                }
-                if(text === "👀"){
-
-                }
-                for(var likesUser in user.likeUsersChatId){
-                     
-                }
-            }
-            return defualtReturn(user, chatId)
-        } catch (e) {
-            console.log(e);
-            return bot.sendMessage(chatId, `Произошла ошибка!`)
-        }
-    })
+    })*/
 }
-
+/*
 async function userProfileShow(user, chatId) {
     textProfile = `${user.name}, ${user.age}\n\nПол: ${user.sex}\nПол для поиска: ${user.sex_like}\n\n📝 - изменить анкету\n📸 - изменить фото\n🔫 - оценивать анкеты\n`
     await bot.sendPhoto(chatId, user.photoId, options.setUserOptions(textProfile))
@@ -295,15 +276,5 @@ function isUserHaveFullProfile(user) {
     }
     return false
 }
-
-async function defualtReturn(user, chatId) {
-    if (user !== null) {
-        user.stateMsg = 0;
-        if (user.likeUsersState == true) {
-            user.likeUsersState = false;
-        }
-    }
-    await bot.sendMessage(chatId, `Что-то не так!`, deleteKeyboardOptions)
-}
-
-botInit()
+*/
+initBot();

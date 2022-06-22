@@ -6,6 +6,14 @@ module.exports = {
             ]
         })
     },
+    profileEditOptions: {
+        reply_markup: JSON.stringify({
+            inline_keyboard: [
+                [{ text: "Имя", callback_data: "name_clbck"},{ text: "Пол: ", callback_data: "name_clbck"}],
+                [{ text: "Возраст", callback_data: "age_clbck"}],
+            ]
+        })
+    },
     sexOptions: {
         reply_markup: JSON.stringify({
             keyboard: [

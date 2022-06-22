@@ -1,6 +1,6 @@
 const {Sequelize} = require('sequelize');
 
-const sequalize = new Sequelize(
+const sequelize = new Sequelize(
     'Match',
     'root',
     'root',
@@ -12,4 +12,16 @@ const sequalize = new Sequelize(
     }
 )
 
-module.exports = sequalize;
+const DBconnection = async () => {
+    try {
+        await sequelize.authenticate();
+        await sequelize.sync();
+    } catch (err) {
+        console.log("Bad connection to DB: ", err);
+    }
+}
+
+module.exports = {
+    sequelize,
+    DBconnection
+}
