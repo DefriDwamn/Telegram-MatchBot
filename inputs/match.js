@@ -5,6 +5,6 @@ module.exports = (bot) => async (message) => {
     try {
         const user = await userModel.findOne({ where: { chatId: chatId.toString() } });
     } catch(err) {
-        console.log(err)
+        console.log(err);
     }
 }

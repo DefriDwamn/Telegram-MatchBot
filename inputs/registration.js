@@ -14,6 +14,6 @@ module.exports = (bot) => async (message) => {
             await bot.sendMessage(chatId, `Вы успешно авторизовались!`, options.deleteKeyboardOptions)
         }
     } catch (err) {
-        console.log(err)
+        console.log(err);
     }
 }

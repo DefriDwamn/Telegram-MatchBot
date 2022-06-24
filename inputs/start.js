@@ -20,6 +20,6 @@ module.exports = (bot) => async (message) => {
             await bot.sendMessage(chatId, `Если вы хотите использовать Matchin, вам необходимо подтвердить свой аккаунт.`, options.registerOptions)
         }
     } catch (err) {
-        console.log(err)
+        console.log(err);
     }
 }

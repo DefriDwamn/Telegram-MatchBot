@@ -1,10 +1,10 @@
 require("dotenv").config();
 const env = process.env;
+const { DBconnection } = require('./db');
 const inputs = require('./inputs');
 const telegramApi = require('node-telegram-bot-api');
 const bot = new telegramApi(env.TG_TOKEN, { polling: true });
 
-const { DBconnection } = require('./db');
 const { Op } = require("sequelize");
 const botCommands = [{ command: '/profile', description: 'Профиль' }]
 
@@ -14,6 +14,7 @@ async function initBot() {
 
     bot.onText(/\/start/, inputs.start(bot));
     bot.onText(/\/profile/, inputs.profile(bot));
+    bot.onText(/\/profile/, inputs.match(bot));
 
     bot.on("contact", inputs.registration(bot));
     bot.on("callback_query", inputs.queryCallback(bot));

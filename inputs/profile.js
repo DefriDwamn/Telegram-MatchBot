@@ -9,10 +9,12 @@ module.exports = (bot) => async (message) => {
         if (user.phoneNumber) {
             if (!isUserFilledProfile(user)) {
                 await bot.sendMessage(chatId, `Ваша анкета пуста! Вам необходимо ее заполнить.`, options.profileEditOptions)
-            }            
+            } else {
+                await bot.sendMessage(chatId, `Профиль`)
+            }
         }
     } catch (err) {
-        console.log(err)
+        console.log(err);
     }
 }
 

@@ -2,10 +2,10 @@
   "name": "telegram-matchbot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "botMatch.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "dev": "nodemon botMatch.js",
+    "start": "node botMatch.js"
   },
   "keywords": [],
   "author": "",
