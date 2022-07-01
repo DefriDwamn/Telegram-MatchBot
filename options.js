@@ -16,7 +16,8 @@ module.exports = {
                     [{ text: "Пол" + sex, callback_data: "sex_clbck" },
                     { text: "Поиск" + sexLike, callback_data: "sexLike_clbck" },
                     { text: "Фото", callback_data: "photo_clbck" }],
-                ]
+                ],
+                remove_keyboard: true
             })
         }
     },

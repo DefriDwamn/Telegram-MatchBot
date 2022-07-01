@@ -1,6 +1,3 @@
-const userModel = require('../models/user');
-const options = require('../options')
-
 module.exports = class messageValidator {
     constructor(bot) {
         this.bot = bot;

@@ -3,7 +3,7 @@ const lang = require('../utils/lang');
 const options = require('../options');
 const { Op } = require('sequelize');
 const { sequelize } = require('../db');
-const { checkUserAndSendProfile } = require('../inputs/profile');
+const { checkUserAndSendProfile } = require('./profile');
 const user = require('../models/user');
 
 const match = (bot) => async (message) => {
@@ -11,25 +11,55 @@ const match = (bot) => async (message) => {
     try {
         const text = message.text;
         const user = await userModel.findOne({ where: { chatId: chatId.toString() } });
-        if (user.matchMode) {
-            if (text == lang.emodjiLike) {
-                addSearchUserToChecked(user, user.lastOtherUser);
-                let searchUser = await userModel.findOne({ where: { chatId: user.lastOtherUser } });
-                addToSearchUserLike(user.chatId, searchUser)
-                await getSearchUserProfileShow(user, chatId, bot);
-            } else if (text == lang.emodjiDisLike) {
-                addSearchUserToChecked(user, user.lastOtherUser);
-                await getSearchUserProfileShow(user, chatId, bot);
-            } else if (text == lang.emodjiLeaveMatch) {
-                user.matchMode = false;
-                user.lastOtherUser = null;
-                await checkUserAndSendProfile(user, chatId, bot);
-            }
-        } else {
+        if (!user.matchMode && !user.profileEditMode) {
             if (text == lang.emodjiMatch) {
                 user.matchMode = true;
-                user.profileEditMode = false;
-                await getSearchUserProfileShow(user, chatId, bot);
+            }
+        }
+        if (user.matchMode) {
+            if (user.checkLikesMode) {
+                if (text == lang.emodjiLike) {
+                    let searchUser = await getFirstLikesUser(user);
+                    await showProfilesToMatch(user, searchUser, bot);
+                    deleteCheckLikesOtherUser(user);
+                }
+                if (text == lang.emodjiDisLike) {
+                    deleteCheckLikesOtherUser(user);
+                }
+                if (text == lang.emodjiLeaveMatch) {
+                    user.lastOtherUser = null;
+                    await checkUserAndSendProfile(user, chatId, bot);
+                }
+                else {
+                    if (user.likeUsersChatId.length != 0) {
+                        await showUserWithLikeToYou(user, bot);
+                    } else {
+                        user.checkLikesMode = false;
+                        user.lastOtherUser = null;
+                        await checkUserAndSendProfile(user, chatId, bot);
+                    }
+                }
+            } else {
+                if (text == lang.emodjiLike) {
+                    addSearchUserToChecked(user, user.lastOtherUser);
+                    let searchUser = await userModel.findOne({ where: { chatId: user.lastOtherUser } });
+                    addToSearchUserLike(user.chatId, searchUser)
+                }
+                if (text == lang.emodjiDisLike) {
+                    addSearchUserToChecked(user, user.lastOtherUser);
+                }
+                if (text == lang.emodjiLeaveMatch) {
+                    user.lastOtherUser = null;
+                    await checkUserAndSendProfile(user, chatId, bot);
+                }
+                else {
+                    if (user.likeUsersChatId.length != 0) {
+                        user.checkLikesMode = true;
+                        await showUserWithLikeToYou(user, bot);
+                    } else {
+                        await showSearchUserProfileShow(user, chatId, bot);
+                    }
+                }
             }
         }
     } catch (err) {
@@ -37,7 +67,7 @@ const match = (bot) => async (message) => {
     }
 }
 
-async function getLikesUserProfileShow(user, bot) {
+async function showUserWithLikeToYou(user, bot) {
     let searchUser = await getFirstLikesUser(user);
     user.lastOtherUser = searchUser.chatId;
     profileText = `Твоя анкета понравилась:\n\n${searchUser.name}, ${searchUser.age}\n\n${searchUser.description}`;
@@ -47,13 +77,15 @@ async function getLikesUserProfileShow(user, bot) {
 async function getFirstLikesUser(user) {
     let likeUsers = user.likeUsersChatId;
     let likeUserChatId = likeUsers[0];
-
     return searchUser = await userModel.findOne({ where: { chatId: likeUserChatId } });
 }
 
-async function showProfileUserToOtherUser(user, otherUser, bot) {
-    profileText = `Match!\n\n${user.tgTag}, ${user.age}\n\n${user.description}`;
-    await bot.sendPhoto(otherUser.chatId, user.photoId, options.searchUserProfileOptionsCustom(profileText));
+async function showProfilesToMatch(user, otherUser, bot) {
+    /*profileText = `Match!\n\n${user.tgTag}, ${user.age}\n\n${user.description}`;
+    await bot.sendPhoto(otherUser.chatId, user.photoId, options.searchUserProfileOptionsCustom(profileText));*/
+
+    profileText = `Match!\n\n${otherUser.tgTag}, ${otherUser.age}\n\n${otherUser.description}`;
+    await bot.sendPhoto(user.chatId, otherUser.photoId, options.searchUserProfileOptionsCustom(profileText));
 }
 
 function deleteCheckLikesOtherUser(user) {
@@ -61,14 +93,14 @@ function deleteCheckLikesOtherUser(user) {
     likeUsers.splice(0, 1);
     user.likeUsersChatId = likeUsers;
 }
-async function getSearchUserProfileShow(user, chatId, bot) {
+
+async function showSearchUserProfileShow(user, chatId, bot) {
     let checkedUsers = new Array();
     if (user.checkedUsersСhatId != null) {
         checkedUsers = user.checkedUsersСhatId;
     }
     let otherUser = await getSearchUserProfile(user.sex, user.sex_like, checkedUsers, chatId);
     if (otherUser == null) {
-        user.matchMode = false;
         user.lastOtherUser = null;
         await bot.sendMessage(chatId, "Анкеты закончились! Приходите попозже.");
         await checkUserAndSendProfile(user, chatId, bot);
@@ -161,5 +193,5 @@ function addToSearchUserLike(userChatId, otherUser) {
 }
 
 module.exports = {
-    match,
+    match
 }

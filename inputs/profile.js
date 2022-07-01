@@ -5,8 +5,7 @@ const profile = (bot) => async (message) => {
     const chatId = message.chat.id;
     try {
         const user = await userModel.findOne({ where: { chatId: chatId.toString() } });
-        user.tgTag = "@"+message.from.username;
-        user.matchMode = false;
+        user.tgTag = "@" + message.from.username;
         await checkUserAndSendProfile(user, chatId, bot);
     } catch (err) {
         console.log(err);
@@ -17,7 +16,6 @@ const profileEdit = (bot) => async (message) => {
     try {
         const user = await userModel.findOne({ where: { chatId: chatId.toString() } });
         user.profileEditMode = true;
-        user.matchMode = false;
         await checkUserAndSendProfile(user, chatId, bot);
     } catch (err) {
         console.log(err);
@@ -25,6 +23,7 @@ const profileEdit = (bot) => async (message) => {
 }
 
 async function checkUserAndSendProfile(user, chatId, bot) {
+    resetUserMods(user);
     if (user.phoneNumber) {
         if (!isUserFilledProfile(user)) {
             let options = setProfileEditOptionsCustom(user);
@@ -40,6 +39,11 @@ async function checkUserAndSendProfile(user, chatId, bot) {
             }
         }
     }
+}
+
+function resetUserMods(user) {
+    user.matchMode = false;
+    user.checkLikesMode = false;
 }
 
 function setProfileEditOptionsCustom(user) {

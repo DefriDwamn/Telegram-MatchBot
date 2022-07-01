@@ -1,5 +1,3 @@
-const userModel = require('../models/user');
-
 module.exports = (bot) => async (cback) => {
     try {
         const message = cback.message;
