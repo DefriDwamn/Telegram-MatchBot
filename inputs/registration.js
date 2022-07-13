@@ -23,6 +23,4 @@ function setUserDefualtValues(user, message) {
     user.phoneNumber = contactPhone;
     user.tgTag = "@" + tgTag;
     user.matchMode = false;
-    user.checkLikesMode = false;
-    user.likeUsersChatId = [];
 }

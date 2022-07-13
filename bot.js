@@ -12,9 +12,9 @@ const initBot = async () => {
     bot.setMyCommands([{ command: '/profile', description: 'Профиль' }]);
 
     bot.onText(lang.startRegExp, inputs.start(bot));
-    bot.onText(lang.profileRegExp, inputs.profile.profile(bot));
-    bot.onText(lang.profileEditRegExp, inputs.profile.profileEdit(bot));
-    bot.onText(lang.matchRegExp, inputs.match.match(bot));
+    bot.onText(lang.profileRegExp, inputs.profile(bot));
+    bot.onText(lang.profileEditRegExp, inputs.profileEdit(bot));
+    bot.onText(lang.matchRegExp, inputs.match(bot));
 
     bot.on("contact", inputs.registration(bot));
     bot.on("callback_query", inputs.queryCallback(bot));

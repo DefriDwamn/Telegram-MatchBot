@@ -67,13 +67,6 @@ module.exports = sequelize.define('user', {
             this.save()
         }
     },
-    checkLikesMode: {
-        type: DataTypes.BOOLEAN,
-        set(value) {
-            this.setDataValue('checkLikesMode', value)
-            this.save()
-        }
-    },
     checkedUsersСhatId: {
         type: DataTypes.ARRAY(DataTypes.STRING),
         set(value) {
@@ -97,10 +90,10 @@ module.exports = sequelize.define('user', {
             this.save()
         }
     },
-    lastOtherUser: {
+    lastCheckedUser: {
         type: DataTypes.STRING,
         set(value) {
-            this.setDataValue('lastOtherUser', value)
+            this.setDataValue('lastCheckedUser', value)
             this.save()
         }
     },
